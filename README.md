@@ -63,7 +63,7 @@ services:
 
 ### WordPress Redis Object Caching
 
-1. Install the [Redis Object Cache](https://wordpress.org/plugins/redis-cache/) plugin
+1. Install the [Redis Object Cache](https://en-gb.wordpress.org/plugins/redis-cache/) plugin
 2. Navigate to **Settings → Redis** in WordPress admin
 3. Click **Enable Object Cache**
 
