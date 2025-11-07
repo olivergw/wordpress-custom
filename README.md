@@ -1,6 +1,6 @@
 # WordPress Custom Docker Image
 
-A high-performance WordPress Docker image built on PHP 8.4-FPM with Redis support for enterprise-level object caching.
+A high-performance WordPress Docker image built on PHP 8.4-FPM with Redis support for object caching.
 
 [![Build and Push to Docker Hub](https://github.com/olivergw/wordpress-custom/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/olivergw/wordpress-custom/actions/workflows/docker-publish.yml)
 
@@ -132,4 +132,4 @@ This project builds upon the official WordPress Docker image and follows the sam
 
 ---
 
-**Ready for production WordPress deployments with enterprise-level Redis caching! 🚀**
+**Ready for production WordPress deployments with Redis caching! 🚀**
