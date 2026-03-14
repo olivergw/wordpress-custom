@@ -1,5 +1,5 @@
 # Custom WordPress image with PhpRedis (pinned) + igbinary
-FROM wordpress:php8.4-fpm
+FROM wordpress:php8.5-fpm
 
 # Install build dependencies, then igbinary + PhpRedis
 RUN apt-get update && apt-get install -y \

@@ -1,12 +1,12 @@
 # WordPress Custom Docker Image
 
-A high-performance WordPress Docker image built on PHP 8.4-FPM with Redis support for object caching.
+A high-performance WordPress Docker image built on PHP 8.5-FPM with Redis support for object caching.
 
 [![Build and Push to Docker Hub](https://github.com/olivergw/wordpress-custom/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/olivergw/wordpress-custom/actions/workflows/docker-publish.yml)
 
 ## 🚀 Features
 
-- **PHP 8.4-FPM** - Latest PHP version for optimal performance
+- **PHP 8.5-FPM** - Latest PHP version for optimal performance
 - **PhpRedis 6.3.0+** - High-performance C extension for Redis connectivity
 - **igbinary** - Efficient binary serialization for faster cache operations
 - **Multi-platform** - Supports both `linux/amd64` and `linux/arm64` architectures
@@ -17,13 +17,19 @@ A high-performance WordPress Docker image built on PHP 8.4-FPM with Redis suppor
 Pull from Docker Hub:
 ```bash
 docker pull olivergw/wordpress-custom:latest
-docker pull olivergw/wordpress-custom:8.4.0
+docker pull olivergw/wordpress-custom:php8.5-fpm
 ```
 
 ### Tags
-- `latest` - Latest stable release
-- `8.4.0`, `8.4`, `8` - Semantic versioning based on PHP version
-- `main` - Latest development build
+Tags are derived automatically from the `FROM wordpress:<tag>` line in the Dockerfile. For the current base image `wordpress:php8.5-fpm`:
+
+- `latest` - Latest stable release (main branch)
+- `php8.5-fpm` - Full base image tag
+- `php8-fpm` - Minor version with variant
+- `8.5` - PHP version only
+- `8` - PHP major version only
+
+To release a new version, update the `FROM` line in the Dockerfile and push to `main` — tags are generated automatically.
 
 ## 🔧 Usage
 
@@ -33,7 +39,7 @@ Replace your WordPress image in `docker-compose.yml`:
 ```yaml
 services:
   wordpress:
-    image: olivergw/wordpress-custom:8.4.0
+    image: olivergw/wordpress-custom:php8.5-fpm
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
@@ -86,12 +92,14 @@ docker build -t wordpress-custom .
 ```
 
 ### Creating New Releases
-```bash
-git tag -a v8.5.0 -m "Release version 8.5.0"
-git push origin v8.5.0
+
+Update the `FROM` line in the `Dockerfile` to the desired WordPress base image tag:
+
+```dockerfile
+FROM wordpress:php8.5-fpm
 ```
 
-This automatically builds and publishes to Docker Hub with proper semantic versioning.
+Then push to `main`. The workflow automatically extracts the tag from the `FROM` line and publishes to Docker Hub with all relevant tags (`php8.5-fpm`, `php8-fpm`, `8.5`, `8`, `latest`). No manual tagging required.
 
 ## 📋 What's Included
 
