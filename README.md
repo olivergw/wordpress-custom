@@ -21,13 +21,15 @@ docker pull olivergw/wordpress-custom:php8.5-fpm
 ```
 
 ### Tags
-Tags are derived automatically from the `FROM wordpress:<tag>` line in the Dockerfile. For the current base image `wordpress:php8.5-fpm`:
+Tags follow the same scheme as the official [WordPress Docker images](https://hub.docker.com/_/wordpress):
+
+For the current base image `wordpress:7.0.0-php8.5-fpm`:
 
 - `latest` - Latest stable release (main branch)
-- `php8.5-fpm` - Full base image tag
-- `php8-fpm` - Minor version with variant
-- `8.5` - PHP version only
-- `8` - PHP major version only
+- `7.0.0-php8.5-fpm` - Full WordPress + PHP version (on main only)
+- `7.0-php8.5-fpm` - WordPress minor + PHP version
+- `7-php8.5-fpm` - WordPress major + PHP version
+- `php8.5-fpm` - PHP version only
 
 To release a new version, update the `FROM` line in the Dockerfile and push to `main` — tags are generated automatically.
 
@@ -93,13 +95,13 @@ docker build -t wordpress-custom .
 
 ### Creating New Releases
 
-Update the `FROM` line in the `Dockerfile` to the desired WordPress base image tag:
+Update the `FROM` line in the `Dockerfile` to your desired WordPress base image tag:
 
 ```dockerfile
-FROM wordpress:php8.5-fpm
+FROM wordpress:7.0.0-php8.5-fpm
 ```
 
-Then push to `main`. The workflow automatically extracts the tag from the `FROM` line and publishes to Docker Hub with all relevant tags (`php8.5-fpm`, `php8-fpm`, `8.5`, `8`, `latest`). No manual tagging required.
+Then push to `main`. The workflow automatically extracts the WordPress and PHP versions from the `FROM` line and publishes to Docker Hub with all relevant tags (`7.0.0-php8.5-fpm`, `7.0-php8.5-fpm`, `7-php8.5-fpm`, `php8.5-fpm`, `latest`). No manual tagging required.
 
 ## 📋 What's Included
 

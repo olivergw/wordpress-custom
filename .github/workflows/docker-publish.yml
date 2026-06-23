@@ -35,15 +35,12 @@ jobs:
         run: |
           WP_TAG=$(grep -oP 'FROM wordpress:\K[^\s]+' Dockerfile)
           echo "tag=${WP_TAG}" >> $GITHUB_OUTPUT
-          PHP_VERSION=$(echo "${WP_TAG}" | grep -oP 'php\K[\d.]+')
-          echo "php_version=${PHP_VERSION}" >> $GITHUB_OUTPUT
-          echo "php_minor=${PHP_VERSION%.*}" >> $GITHUB_OUTPUT
-          echo "php_major=${PHP_VERSION%%.*}" >> $GITHUB_OUTPUT
-          VARIANT=$(echo "${WP_TAG}" | grep -oP '(?<=php[\d.]{3,}-).*' || true)
-          if [ -n "${VARIANT}" ]; then
-            echo "php_version_variant=php${PHP_VERSION}-${VARIANT}" >> $GITHUB_OUTPUT
-            echo "php_minor_variant=php${PHP_VERSION%.*}-${VARIANT}" >> $GITHUB_OUTPUT
-          fi
+          # WordPress version is before the first dash (e.g. 7.0.0 from 7.0.0-php8.5-fpm)
+          WP_VER=${WP_TAG%%-*}
+          # PHP+SAPI part (e.g. php8.5-fpm)
+          echo "php_sapi=${WP_TAG#*-}" >> $GITHUB_OUTPUT
+          echo "wp_major=${WP_VER%%.*}" >> $GITHUB_OUTPUT
+          echo "wp_minor=${WP_VER%.*}" >> $GITHUB_OUTPUT
 
       - name: Extract metadata
         id: meta
@@ -51,17 +48,11 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=raw,value=${{ steps.wp_version.outputs.tag }},enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ steps.wp_version.outputs.tag }}
-            type=raw,value=${{ steps.wp_version.outputs.php_version_variant }}
-            type=raw,value=${{ steps.wp_version.outputs.php_minor_variant }}
-            type=raw,value=${{ steps.wp_version.outputs.php_version }}
-            type=raw,value=${{ steps.wp_version.outputs.php_minor }}
-            type=raw,value=${{ steps.wp_version.outputs.php_major }}
+            type=raw,value=${{ steps.wp_version.outputs.wp_minor }}-${{ steps.wp_version.outputs.php_sapi }}
+            type=raw,value=${{ steps.wp_version.outputs.wp_major }}-${{ steps.wp_version.outputs.php_sapi }}
+            type=raw,value=${{ steps.wp_version.outputs.php_sapi }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
