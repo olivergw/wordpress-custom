@@ -6,6 +6,7 @@ This repository builds a single custom WordPress container image.
 
 - `Dockerfile` defines the WordPress/PHP base image and installs igbinary and PhpRedis.
 - `.github/workflows/docker-publish.yml` builds `linux/amd64` and `linux/arm64` images, derives tags from the `FROM` line, and publishes main-branch builds.
+- `.github/dependabot.yml` checks the Docker base and workflow actions weekly.
 - `README.md` documents image tags, local usage, Redis configuration, and release steps.
 
 Keep runtime changes in the `Dockerfile`; do not add application themes, plugins, or WordPress source unless the project scope explicitly changes.
@@ -31,7 +32,7 @@ docker run --rm wordpress-custom:dev php --version
 docker run --rm wordpress-custom:dev php -r 'require "/usr/src/wordpress/wp-includes/version.php"; echo $wp_version, PHP_EOL;'
 ```
 
-GitHub Actions runs the production-equivalent multi-platform build on pull requests and pushes to `main`.
+GitHub Actions runs the production-equivalent multi-platform build on pull requests and pushes to `main`. Dependabot opens weekly update pull requests from GitHub-hosted infrastructure.
 
 ## Coding Style & Naming Conventions
 
