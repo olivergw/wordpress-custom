@@ -34,6 +34,15 @@ For the current base image `wordpress:7.1.0-php8.5-fpm`:
 
 Just update the `FROM` line in the Dockerfile and push to `main`.
 
+### Automated updates
+
+Dependabot checks the official WordPress base image every Monday at 09:00
+Europe/London and opens a pull request when a newer compatible tag is available.
+It checks GitHub Actions shortly afterwards. Pull requests build both supported
+architectures without publishing; merging a successful PR publishes the new
+image and aliases from `main`. This process runs on GitHub and does not require
+a local machine or Docker daemon.
+
 ## 🔧 Usage
 
 ### Deployment Configuration
@@ -103,7 +112,12 @@ docker build -t wordpress-custom .
 
 ### Creating New Releases
 
-To update the base image, change the `FROM` line in the Dockerfile and push to `main`. The workflow publishes the complete WordPress base tag, `latest`, and aliases for the PHP/SAPI and WordPress major and minor versions. For `wordpress:7.1.0-php8.5-fpm`, these are `php8.5-fpm`, `7-php8.5-fpm`, and `7.1-php8.5-fpm`.
+Dependabot normally opens the base-image update pull request automatically. For
+a manual release, change the `FROM` line in the Dockerfile and open a pull
+request. The workflow publishes the complete WordPress base tag, `latest`, and
+aliases for the PHP/SAPI and WordPress major and minor versions after merge. For
+`wordpress:7.1.0-php8.5-fpm`, these are `php8.5-fpm`, `7-php8.5-fpm`, and
+`7.1-php8.5-fpm`.
 
 ## 📋 What's Included
 
