@@ -17,18 +17,20 @@ A high-performance WordPress Docker image built on PHP 8.5-FPM with Redis suppor
 Pull from Docker Hub:
 ```bash
 docker pull olivergw/wordpress-custom:latest
-docker pull olivergw/wordpress-custom:php8.5-fpm
+docker pull olivergw/wordpress-custom:7.1.0-php8.5-fpm
 ```
 
 ### Tags
 
-For the current base image `wordpress:7.0.0-php8.5-fpm`:
+For the current base image `wordpress:7.1.0-php8.5-fpm`:
 
 | Tag | Example | Triggered when |
 |-----|---------|----------------|
-| Version from Dockerfile | `7.0.0-php8.5` (from `wordpress:7.0.0-php8.5-fpm`) | Every push to `main` |
+| Version from Dockerfile | `7.1.0-php8.5-fpm` (from `wordpress:7.1.0-php8.5-fpm`) | Every push to `main` |
 | `latest` | `olivergw/wordpress-custom:latest` | Push to `main` |
-| Commit SHA | Short + long SHA | Every push |
+| PHP and SAPI | `php8.5-fpm` | Every push to `main` |
+| WordPress major | `7-php8.5-fpm` | Every push to `main` |
+| WordPress minor | `7.1-php8.5-fpm` | Every push to `main` |
 
 Just update the `FROM` line in the Dockerfile and push to `main`.
 
@@ -40,7 +42,7 @@ Replace your WordPress image in `docker-compose.yml`:
 ```yaml
 services:
   wordpress:
-    image: olivergw/wordpress-custom:php8.5-fpm
+    image: olivergw/wordpress-custom:7.1.0-php8.5-fpm
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
@@ -51,6 +53,7 @@ services:
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
         define('WP_REDIS_DATABASE', 0);
+        define('WP_REDIS_IGBINARY', true);
     depends_on:
       - db
       - redis
@@ -94,7 +97,7 @@ docker build -t wordpress-custom .
 
 ### Creating New Releases
 
-To update the base image, change the `FROM` line in the Dockerfile and push to `main`. The workflow extracts the WordPress version (e.g. `7.0.0`) and PHP minor version (e.g. `php8.5`) automatically — producing tags like `7.0.0-php8.5`, `latest`, plus short + long SHA.
+To update the base image, change the `FROM` line in the Dockerfile and push to `main`. The workflow publishes the complete WordPress base tag, `latest`, and aliases for the PHP/SAPI and WordPress major and minor versions. For `wordpress:7.1.0-php8.5-fpm`, these are `php8.5-fpm`, `7-php8.5-fpm`, and `7.1-php8.5-fpm`.
 
 ## 📋 What's Included
 
@@ -113,6 +116,7 @@ To update the base image, change the `FROM` line in the Dockerfile and push to `
 Check that extensions are loaded:
 ```bash
 docker exec <container> php -m | grep -E "redis|igbinary"
+docker exec <container> php -r 'exit(defined("Redis::SERIALIZER_IGBINARY") ? 0 : 1);'
 ```
 
 Expected output:

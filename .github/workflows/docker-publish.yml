@@ -28,13 +28,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Extract WordPress version + PHP
+      - name: Extract WordPress image tags
         id: wp_version
         run: |
-          WP_TAG=$(grep -oP 'FROM wordpress:\K[^\s]+' Dockerfile)
-          WP_VER="${WP_TAG%%-*}"           # 7.0.0
-          WP_PHP="$(echo "${WP_TAG#*-}" | cut -d. -f1-2)"  # php8.5
-          echo "tag=${WP_VER}-${WP_PHP}" >> $GITHUB_OUTPUT
+          WP_TAG=$(awk '$1 == "FROM" && $2 ~ /^wordpress:/ { sub(/^wordpress:/, "", $2); print $2; exit }' Dockerfile)
+          WP_VERSION="${WP_TAG%%-*}"
+          PHP_SAPI="${WP_TAG#*-}"
+          echo "tag=${WP_TAG}" >> "$GITHUB_OUTPUT"
+          echo "wp_minor=${WP_VERSION%.*}" >> "$GITHUB_OUTPUT"
+          echo "wp_major=${WP_VERSION%%.*}" >> "$GITHUB_OUTPUT"
+          echo "php_sapi=${PHP_SAPI}" >> "$GITHUB_OUTPUT"
 
       - name: Extract metadata
         id: meta
@@ -44,8 +47,9 @@ jobs:
           tags: |
             type=raw,value=${{ steps.wp_version.outputs.tag }},enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,format=short
-            type=sha,format=long
+            type=raw,value=${{ steps.wp_version.outputs.php_sapi }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.wp_version.outputs.wp_major }}-${{ steps.wp_version.outputs.php_sapi }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.wp_version.outputs.wp_minor }}-${{ steps.wp_version.outputs.php_sapi }},enable={{is_default_branch}}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

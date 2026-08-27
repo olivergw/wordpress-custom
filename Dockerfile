@@ -1,5 +1,5 @@
-# Custom WordPress image with PhpRedis (pinned) + igbinary
-FROM wordpress:7.0.0-php8.5-fpm
+# Custom WordPress image with PhpRedis + igbinary
+FROM wordpress:7.1.0-php8.5-fpm
 
 # Install build dependencies, then igbinary + PhpRedis
 RUN apt-get update && apt-get install -y \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
         zlib1g-dev \
     && pecl install igbinary \
     && docker-php-ext-enable igbinary \
-    && pecl install redis \
+    && pecl install --configureoptions 'enable-redis-igbinary="yes"' redis \
     && docker-php-ext-enable redis \
     && apt-get remove -y build-essential libssl-dev pkg-config autoconf g++ make libc6-dev zlib1g-dev \
     && apt-get autoremove -y \
