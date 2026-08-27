@@ -36,6 +36,12 @@ Just update the `FROM` line in the Dockerfile and push to `main`.
 
 ## 🔧 Usage
 
+### Deployment Configuration
+
+This image supplies WordPress, PHP-FPM, PhpRedis, and igbinary. Site-specific PHP
+configuration remains in the consuming deployment. Update its mounted PHP INI
+files for upload, memory, execution-time, or OPcache changes.
+
 ### Basic Setup
 Replace your WordPress image in `docker-compose.yml`:
 
