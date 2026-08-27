@@ -141,7 +141,9 @@ redis
 
 ## 📄 License
 
-This project builds upon the official WordPress Docker image and follows the same licensing terms.
+This repository's original Dockerfile, workflow, and documentation are licensed
+under the [MIT License](LICENSE). WordPress and software included in the resulting
+image retain their respective upstream licenses.
 
 ---
 
