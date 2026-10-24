@@ -1,6 +1,15 @@
 # Custom WordPress image with PhpRedis + igbinary
 FROM wordpress:7.1.3-php8.5-fpm
 
+# Require the Debian Trixie fix for CVE-2026-111497.
+RUN . /etc/os-release \
+    && test "$ID" = debian \
+    && test "$VERSION_CODENAME" = trixie \
+    && apt-get update \
+    && apt-get install -y --only-upgrade libbrotli1 \
+    && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' libbrotli1)" ge '1.1.0-2+deb13u1' \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install build dependencies, then igbinary + PhpRedis
 RUN apt-get update && apt-get install -y \
         build-essential \

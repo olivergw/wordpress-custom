@@ -45,6 +45,27 @@ a local machine or Docker daemon.
 
 ## 🔧 Usage
 
+### Brotli security fix
+
+Builds require Debian Trixie's `libbrotli1` security update for
+CVE-2026-111497 (`1.1.0-2+deb13u1` or newer). The Dockerfile upgrades the package
+and fails the build if the fixed version is unavailable or the base distribution
+changes. Existing Redis and igbinary extension installation remains unchanged.
+
+After the main-branch publishing workflow succeeds, update each deployment:
+
+```bash
+docker compose pull wordpress
+docker compose up -d --no-deps --force-recreate wordpress
+docker compose exec wordpress dpkg-query -W libbrotli1
+docker compose exec wordpress php -v
+docker compose ps
+```
+
+The published tag remains `7.1.3-php8.5-fpm`; pulling and recreating is required
+to use the rebuilt image. Record the previous image digest before deployment if
+needed for rollback. Rolling back to an unpatched image restores the vulnerability.
+
 ### Deployment Configuration
 
 This image supplies WordPress, PHP-FPM, PhpRedis, and igbinary. Site-specific PHP
