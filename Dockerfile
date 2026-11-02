@@ -1,5 +1,5 @@
 # Custom WordPress image with PhpRedis + igbinary
-FROM wordpress:7.1.3-php8.5-fpm
+FROM wordpress:7.1.4-php8.5-fpm
 
 # Require the Debian Trixie fix for CVE-2026-111497.
 RUN . /etc/os-release \
